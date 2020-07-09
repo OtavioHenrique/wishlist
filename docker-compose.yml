@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: wishlist
+    ports:
+      - "3306:3306"
+  app:
+    build:
+      context: .
+    depends_on:
+      - mysql
+    ports:
+      - "3000:3000"
+    environment:
+      WISHLIST_DATABASE_PASSWORD: wishlist
+      WISHLIST_DATABASE_USER: "root"
+    entrypoint: sh -c "bin/rake db:drop && bin/rake db:create && bin/rake db:migrate && bin/rails s"
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
