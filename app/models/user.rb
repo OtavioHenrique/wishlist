@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
 class User < ApplicationRecord
-  validate :email, uniqueness: true
+  validates :email, uniqueness: true, case_sensitive: false
   serialize :wishlist, Array
 end
