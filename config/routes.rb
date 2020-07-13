@@ -6,5 +6,7 @@ Rails.application.routes.draw do
   namespace :api do
     post "/authentication/login", to: "authentication#login"
     resources :users, only: %i[show create update destroy]
+
+    post "users/wishlist", to: "users#add_wishlist"
   end
 end

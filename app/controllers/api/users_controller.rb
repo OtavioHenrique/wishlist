@@ -30,7 +30,19 @@ module Api
       @current_user.destroy
     end
 
+    def add_wishlist
+      product_id = product_params[:product_id]
+
+      WishListService.new(user: @current_user).add_product(product_id)
+
+      render status: :ok
+    end
+
     private
+
+    def product_params
+      params.permit(:product_id)
+    end
 
     def user_params
       params.require(:user).permit(:name, :email, :password)

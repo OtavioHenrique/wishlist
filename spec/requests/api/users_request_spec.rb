@@ -149,4 +149,27 @@ RSpec.describe "Api::Users", type: :request do
       end
     end
   end
+
+  describe "POST api/users#wishlist" do
+    let(:user) { create(:user) }
+    let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
+    let(:wish_list_service) { instance_double(WishListService) }
+    let(:product_id) { "test_id" }
+    let(:params) do
+      {
+        product_id: product_id
+      }
+    end
+
+    before do
+      allow(WishListService).to receive(:new).and_return(wish_list_service)
+      allow(wish_list_service).to receive(:add_product).with(product_id)
+    end
+
+    it "returns HTTP success code" do
+      post "/api/users/wishlist", params: params, headers: { "Authorization" => token }
+
+      expect(response).to have_http_status(200)
+    end
+  end
 end
