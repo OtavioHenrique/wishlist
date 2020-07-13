@@ -2,7 +2,7 @@
 
 class ApplicationController < ActionController::API
   def authorize_request
-    begin
+    begin # rubocop:disable Style/RedundantBegin
       if expired_token
         render_unauthorized("Expired Token")
       else

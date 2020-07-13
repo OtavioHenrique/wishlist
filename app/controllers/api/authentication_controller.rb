@@ -5,7 +5,6 @@ module Api
     def login
       @user = User.find_by(email: login_params[:email])
 
-
       if @user&.authenticate(login_params[:password])
         token = JsonWebTokenService.encode(payload: token_payload, expiration: token_expiration)
 
