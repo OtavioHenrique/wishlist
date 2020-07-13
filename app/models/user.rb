@@ -11,4 +11,8 @@ class User < ApplicationRecord
       user["wishlist"] = WishListService.new(user: self).render_products
     end
   end
+
+  def render_wishlist
+    WishListService.new(user: self).render_products
+  end
 end

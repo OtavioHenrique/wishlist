@@ -38,6 +38,10 @@ module Api
       render status: :ok
     end
 
+    def wishlist
+      render json: @current_user.render_wishlist, status: :ok
+    end
+
     private
 
     def user_params
