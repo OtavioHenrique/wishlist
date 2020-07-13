@@ -8,11 +8,11 @@ ruby "2.7.1"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 6.0.3", ">= 6.0.3.1"
 # Use mysql as the database for Active Record
+gem "dotenv-rails"
 gem "httparty"
 gem "mysql2", ">= 0.4.4"
 # Use Puma as the app server
 gem "puma", "~> 4.1"
-gem "dotenv-rails"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.7'
 # Use Redis adapter to run Action Cable in production

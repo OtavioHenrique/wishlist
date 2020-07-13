@@ -4,6 +4,7 @@ require "rails_helper"
 
 RSpec.describe WishListService do
   subject(:wishlist_service) { described_class.new(user: user) }
+
   let(:products_client) { instance_double(MagaluProductsClient) }
 
   describe "#add_product" do

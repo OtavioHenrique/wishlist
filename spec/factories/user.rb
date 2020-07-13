@@ -8,10 +8,7 @@ FactoryBot.define do
 
     trait :wishlist do
       wishlist do
-        [
-          "1bf0f365-fbdd-4e21-9786-da459d78dd1f",
-          "c8b8e1c5-2825-51b4-54cb-582d58790e48"
-        ]
+        %w[1bf0f365-fbdd-4e21-9786-da459d78dd1f c8b8e1c5-2825-51b4-54cb-582d58790e48]
       end
     end
   end
