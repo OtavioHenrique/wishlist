@@ -9,6 +9,20 @@ class WishListService
     product_response = get_product(product_id)
 
     @user.wishlist << product_id if product_response[:code].nil?
+
+    Rails.logger.info("Added product #{product_id} to user #{@user.id} wishlist")
+
+    @user
+  end
+
+  def render_products
+    @user.wishlist.map do |product|
+      product_response = get_product(product)
+
+      Rails.logger.error("Product #{product} doesn't exists") if product_response[:code].present?
+
+      product_response
+    end
   end
 
   private

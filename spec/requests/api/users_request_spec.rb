@@ -63,7 +63,7 @@ RSpec.describe "Api::Users", type: :request do
   end
 
   describe "GET api/users#show" do
-    let(:user) { create(:user) }
+    let(:user) { create(:user, :wishlist) }
     let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
 
     it "returns 200 HTTP code" do
