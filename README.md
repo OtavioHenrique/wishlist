@@ -43,7 +43,13 @@ docker attach $(docker ps -qf name=app)
 Esse projeto conta com 100% de cobertura de testes automatizados(relatorio pela gem `coverage`), todo codigo escrito tem um teste para ele, para rodar os testes existem duas formas:
 
 * Se ja estiver com a aplicacao rodando local como descrito no step [Como Rodar](#Como-rodar), basta executar `docker-compose app rspec`
-* Caso nao tenha a aplicacao rodando, basta rodar `docker-compose app rspec`
+
+```
+Finished in 0.74843 seconds (files took 4.46 seconds to load)
+30 examples, 0 failures
+
+Coverage report generated for RSpec to /app/coverage. 367 / 367 LOC (100.0%) covered.
+```
 
 Apos rodar o primeiro teste, a gem `coverage` ira criar uma pasta chamada `coverage` onde tem um arquivo html com o relatorio de todos os testes.
 
@@ -52,7 +58,13 @@ Apos rodar o primeiro teste, a gem `coverage` ira criar uma pasta chamada `cover
 Esse projeto usa a gem `rubocop` para estabelecer os padroes de codigo da comunidade Ruby e a consistencia dele, para rodar, apenas digite:
 
 * `docker-compose exec app rubocop` caso tenha o container ja rodando.
-* `docker-compose run app rubocop` caso nao tenha o container rodando.
+
+```
+Inspecting 43 files
+...........................................
+
+43 files inspected, no offenses detected
+```
 
 Nao existe nenhuma infracao nesse projeto.
 
