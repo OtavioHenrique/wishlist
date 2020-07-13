@@ -65,6 +65,23 @@ RSpec.describe "Api::Users", type: :request do
   describe "GET api/users#show" do
     let(:user) { create(:user, :wishlist) }
     let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
+    let(:wish_list_service) { instance_double(WishListService) }
+    let(:product_price) { 199.0 }
+    let(:product_name) { "Fone" }
+    let(:rendered_product) do
+      [
+        {
+          name: product_name,
+          price: product_price
+        }
+      ]
+    end
+
+    before do
+      allow(WishListService).to receive(:new).and_return(wish_list_service)
+      allow(wish_list_service).to receive(:render_products)
+        .and_return(rendered_product)
+    end
 
     it "returns 200 HTTP code" do
       get "/api/users/#{user.id}", headers: { "Authorization" => token }
@@ -170,6 +187,43 @@ RSpec.describe "Api::Users", type: :request do
       post "/api/users/wishlist", params: params, headers: { "Authorization" => token }
 
       expect(response).to have_http_status(200)
+    end
+  end
+
+  describe "GET /api/users/wishlist#render" do
+    let(:product_id) { "test_id" }
+    let(:user) { create(:user, wishlist: [product_id]) }
+    let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
+    let(:wish_list_service) { instance_double(WishListService) }
+    let(:product_price) { 199.0 }
+    let(:product_name) { "Fone" }
+    let(:rendered_product) do
+      [
+        {
+          name: product_name,
+          price: product_price
+        }
+      ]
+    end
+
+    before do
+      allow(WishListService).to receive(:new).and_return(wish_list_service)
+      allow(wish_list_service).to receive(:render_products)
+        .and_return(rendered_product)
+    end
+
+    it "returns HTTP success code" do
+      get "/api/users/wishlist/render", headers: { "Authorization" => token }
+
+      expect(response).to have_http_status(200)
+    end
+
+    it "returns correct json response with rendered products" do
+      get "/api/users/wishlist/render", headers: { "Authorization" => token }
+
+      json_response = JSON.parse(response.body)
+
+      expect(json_response).to include("name" => product_name, "price" => product_price)
     end
   end
 end
