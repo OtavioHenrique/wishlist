@@ -16,7 +16,7 @@ services:
     environment:
       WISHLIST_DATABASE_PASSWORD: wishlist
       WISHLIST_DATABASE_USER: "root"
-    entrypoint: sh -c "bin/rake db:drop && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0"
+    entrypoint: sh -c "./dockerize -timeout 60s -wait tcp://mysql:3306 bin/rake db:drop && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0"
     stdin_open: true
     tty: true
     volumes:
