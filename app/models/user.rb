@@ -5,4 +5,10 @@ class User < ApplicationRecord
 
   validates :email, uniqueness: true, case_sensitive: false
   serialize :wishlist, Array
+
+  def as_json(*)
+    super.except("wishlist").tap do |user|
+      user["wishlist"] = WishListService.new(user: self).render_products
+    end
+  end
 end

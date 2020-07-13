@@ -9,6 +9,7 @@ class WishListService
     product_response = get_product(product_id)
 
     @user.wishlist << product_id if product_response[:code].nil?
+    @user.save!
 
     Rails.logger.info("Added product #{product_id} to user #{@user.id} wishlist")
 
