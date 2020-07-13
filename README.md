@@ -42,7 +42,7 @@ docker attach $(docker ps -qf name=app)
 
 Esse projeto conta com 100% de cobertura de testes automatizados(relatorio pela gem `coverage`), todo codigo escrito tem um teste para ele, para rodar os testes existem duas formas:
 
-* Se ja estiver com a aplicacao rodando local como descrito no step ![Como Rodar](#Como-rodar), basta executar `docker-compose app rspec`
+* Se ja estiver com a aplicacao rodando local como descrito no step [Como Rodar](#Como-rodar), basta executar `docker-compose app rspec`
 * Caso nao tenha a aplicacao rodando, basta rodar `docker-compose app rspec`
 
 Apos rodar o primeiro teste, a gem `coverage` ira criar uma pasta chamada `coverage` onde tem um arquivo html com o relatorio de todos os testes.
@@ -211,3 +211,71 @@ DELETE `localhost:3000/api/users/<ID_USUARIO>`
 E deve ser retornado um HTTP status 204 com uma resposta vazia.
 
 *Nota: Nao utilizei soft delete para ficar mais compliance com as leis da LGPD*
+
+## Pontos importantes
+
+### Arquitetura geral da aplicacao
+
+Para fazer essa aplicacao eu considerei o cenario onde existe uma aplicacao (Client) que no caso pode ser um aplicativo ou um front-end, que conhece o ID dos produtos que esta sendo listado ao usuario, e quando o usuario clicar no botao de adicionar a wishlist, o client envia apenas o ID desse produto ao back-end (Essa aplicacao) responsavel por administrar a lista de desejo dos usuarios.
+
+### Soft delete vs Hard delete
+
+Optei por deletar o usuario completamente para ficar de acordo coma LGPD.
+
+### Renderizar produtos no endpoint de SHOW do user
+
+Optei por renderizar os produtos no endpoint de SHOW do user, sei que isso nao e muito performatico sem um cache de produtos (Igual falei na parte de TODOS), porem achei que assim fica melhor, porem ali poderia ser mostrado so os IDs tambem.
+
+### Utilizar JWT para Authorization/Authentication
+
+Optei por utilizar o JWT pois precisava de uma maneira rapida e aceitavel de fazer isso (Sem ser tokens infinitos), porem como falei na parte de TODOs o ideal era ter um servico de autenticacao separado baseado em OAuth2
+
+### 100% Cobertura de testes
+
+Esse projeto conta com 100% cobertura de testes automatizados
+
+### Rubocop
+
+Esse projeto esta de acordo com as regras da comunidade para consistencia e design de codigo.
+
+### ENVs
+
+Esse projeto utiliza ENVs seguindo o padrao 12-factor app.
+
+## TODOS (O que faltaria fazer)
+
+### Colocar em um CI
+
+Colocar o projeto em um CI
+
+### Dockerfile multistage
+
+Ter dois stages no dockerfile, um para development e outro para production.
+
+### Otimizar Dockerfile
+
+Hoje a imagem tem 207MB, daria para diminuir um pouco mais ela
+
+### Circuit Breakers
+
+Eu colocaria um circuit breaker em torno das chamadas para procurar produtos (Nunca se sabe quando a API pode cair), e com base nesse circuito tomar decisoes como "Tirar o botao de wishlist da tela do usuario", porem nao tive tempo. Se considerar um sistema que rode em um Service Mesh como Envoy, ele ja teria circuit breaker no sidecar.
+
+### Colocar produtos na wishlist de maneira assincrona
+
+A minha ideia inicial era colocar os produtos na wishlist de maneira async, utilizando o Sidekiq(Equivalente ao Celery do Python), dessa maneira o sistema se tornaria mais escalavel e teria uma fila para adicionar produtos na wishlist (ficando mais resiliente), nao acredito que os produtos precisam ser colocados de maneira sincrona igual foi feito, porem nao tive tempo de adicionar isso.
+
+### Colocar um cache nos produtos
+
+Cheguei a cogitar fazer um cache de produtos em um Redis, primeiro procurar no cache e se nao estiver um la, procurar na API e adicionar no cache, dessa maneira ficaria mais escalavel e mais rapido, o problema e que nao saberia com qual frequencia precisaria invalidar um cache (produto saiu do catalogo), entao preferi por nao fazer cache por hora (tambem nao tinha muito tempo), mas fica como uma sugestao de algum TODO que poderia ser feito.
+
+### Consertar BUG no resource de Users
+
+Os resources de `SHOW`, `UPDATE` e `DESTROY` do user, seguindo o padrao REST pegam o ID do usuario passado como parametro na URL, exemplo `/api/users/<ID_USER>`, porem hoje a aplicacao esta com um bug que independente do ID passado ela so vai realizar a operacao no usuario correspondente ao Token passado, ou seja, se voce fazer um `PUT /api/users/3` passando um token do usuario 2, ele vai realizar a operacao no usuario 2 sempre, enquanto o correto seria enviar um status 401 (Unauthorized), isso e um problema existente porem apenas uma quebra de padrao, um usuario nao conseguiria (nao teria autorizacao) para mexer em outro registro que nao fosse o dele.
+
+### Colocar I18n
+
+Hoje varias mensagens estao hardcoded, seria necessario adicionar I18n na aplicacao.
+
+### Criar uma Postman Collection do projeto
+
+Falta criar uma Postman collection do projeto, com todos endpoints e exemplos de uso.
