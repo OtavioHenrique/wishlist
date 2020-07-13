@@ -7,11 +7,14 @@ RSpec.describe "Api::Users", type: :request do
     context "when user creation is successfull" do
       let(:name) { "John Doe" }
       let(:email) { "john.doe@test.com" }
+      let(:password) { "test123" }
+
       let(:user_params) do
         {
           user: {
             name: name,
-            email: email
+            email: email,
+            password: password
           }
         }
       end
@@ -60,54 +63,46 @@ RSpec.describe "Api::Users", type: :request do
   end
 
   describe "GET api/users#show" do
-    context "when user exists" do
-      let(:user) { create(:user) }
+    let(:user) { create(:user) }
+    let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
 
-      it "returns 200 HTTP code" do
-        get "/api/users/#{user.id}"
+    it "returns 200 HTTP code" do
+      get "/api/users/#{user.id}", headers: { "Authorization" => token }
 
-        expect(response).to have_http_status(200)
-      end
-
-      it "returns the user" do
-        get "/api/users/#{user.id}"
-
-        expect(response.body).to eq user.to_json
-      end
+      expect(response).to have_http_status(200)
     end
 
-    context "when user doesn't exists" do
-      it "returns 404 HTTP code" do
-        get "/api/users/100000"
+    it "returns the user" do
+      get "/api/users/#{user.id}", headers: { "Authorization" => token }
 
-        expect(response).to have_http_status(404)
-      end
+      expect(response.body).to eq user.to_json
     end
   end
 
   describe "PUT api/users#update" do
-    context "when updates successfull" do
-      let(:user) { create(:user) }
-      let(:name) { "test name" }
-      let(:email) { "test_email@email.com" }
+    let(:user) { create(:user) }
+    let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
+    let(:name) { "test name" }
+    let(:email) { "test_email@email.com" }
 
-      let(:params) do
-        {
-          user: {
-            name: name,
-            email: email
-          }
+    let(:params) do
+      {
+        user: {
+          name: name,
+          email: email
         }
-      end
+      }
+    end
 
+    context "when updates successfull" do
       it "returns success HTTP code" do
-        put "/api/users/#{user.id}", params: params
+        put "/api/users/#{user.id}", params: params, headers: { "Authorization" => token }
 
         expect(response).to have_http_status(200)
       end
 
       it "returns updated user" do
-        put "/api/users/#{user.id}", params: params
+        put "/api/users/#{user.id}", params: params, headers: { "Authorization" => token }
 
         user = JSON.parse(response.body)
 
@@ -116,32 +111,18 @@ RSpec.describe "Api::Users", type: :request do
     end
 
     context "when update fail" do
-      let(:user) { create(:user) }
-      let(:name) { "test name" }
-      let(:email) { "test_email@email.com" }
-
-      let(:params) do
-        {
-          user: {
-            name: name,
-            email: email,
-            undefined_attribute: 42
-          }
-        }
-      end
-
       before do
         create(:user, email: email)
       end
 
       it "returns success HTTP code" do
-        put "/api/users/#{user.id}", params: params
+        put "/api/users/#{user.id}", params: params, headers: { "Authorization" => token }
 
         expect(response).to have_http_status(422)
       end
 
       it "returns correct errrorr code" do
-        put "/api/users/#{user.id}", params: params
+        put "/api/users/#{user.id}", params: params, headers: { "Authorization" => token }
 
         error = JSON.parse(response.body)
 
@@ -153,15 +134,16 @@ RSpec.describe "Api::Users", type: :request do
   describe "DELETE api/users#destroy" do
     context "when user exists" do
       let(:user) { create(:user) }
+      let(:token) { JsonWebTokenService.encode(payload: { user_id: user.id }) }
 
       it "returrns success HTTP code" do
-        delete "/api/users/#{user.id}"
+        delete "/api/users/#{user.id}", headers: { "Authorization" => token }
 
         expect(response).to have_http_status(204)
       end
 
       it "deletes user" do
-        delete "/api/users/#{user.id}"
+        delete "/api/users/#{user.id}", headers: { "Authorization" => token }
 
         expect(User.find_by(id: user.id)).to be_nil
       end

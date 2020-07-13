@@ -7,7 +7,7 @@ WORKDIR /app
 COPY Gemfile* ./
 
 RUN bundle config build.nokogiri --use-system-libraries && \
-    apk --update add --no-cache make gcc g++ git curl libxslt-dev mariadb-dev libgcrypt-dev bash libxml2-dev tzdata \
+    apk --update add --no-cache make gcc g++ git curl libgcrypt-dev libxslt-dev mariadb-dev libgcrypt-dev bash libxml2-dev tzdata \
       libgcc libstdc++ libx11 glib && \
     bundle install --no-cache && \
     bundle binstubs puma && \
