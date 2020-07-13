@@ -72,6 +72,16 @@ Nao existe nenhuma infracao nesse projeto.
 
 Esse projeto conta com alguns endpoints, veja como usar:
 
+### healthcheck
+
+Esse projeto possui uma rota de `healthcheck` no `/healthcheck`, basta dar um GET nela e voce deve obter como resposta uma mensagem de status 200 e um "OK"
+
+GET `/healthcheck`
+
+```
+OK
+```
+
 ### Criar usuario
 
 Para criar um usuario, basta mandar um `POST /api/users`, no caso de estar rodando local um `localhost:3000/api/users` com o seguinte json:
@@ -270,7 +280,7 @@ Hoje a imagem tem 207MB, daria para diminuir um pouco mais ela
 
 ### Circuit Breakers
 
-Eu colocaria um circuit breaker em torno das chamadas para procurar produtos (Nunca se sabe quando a API pode cair), e com base nesse circuito tomar decisoes como "Tirar o botao de wishlist da tela do usuario", porem nao tive tempo. Se considerar um sistema que rode em um Service Mesh como Envoy, ele ja teria circuit breaker no sidecar.
+Eu colocaria um circuit breaker em torno das chamadas para procurar produtos (Nunca se sabe quando a API pode cair), e com base nesse circuito tomar decisoes como "Tirar o botao de wishlist da tela do usuario", porem nao tive tempo. Se considerar um sistema que rode em um Service Mesh como Envoy, ele ja teria circuit breaker no sidecar. Tambem poderia ser exposto no `healthcheck` o status dos circuitos (Tenho um post falando sobre isso no meu blog)
 
 ### Colocar produtos na wishlist de maneira assincrona
 
